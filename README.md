@@ -1,5 +1,7 @@
 In the project directory, you can run:
 
+Ensure that you have the environment variables correctly setup to be able to run the app.
+
 ### run `npm start`
 
 Runs the app in the development mode.\

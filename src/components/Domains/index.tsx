@@ -24,6 +24,19 @@ const Domains = () => {
   // State to store the selected information query type
   const [infomrationQuery, setInformationQuery] =
     useState<InformationType>("domain");
+  const [checkboxes, setCheckboxes] = useState([
+    { label: "Domain Information", isChecked: true },
+    { label: "Contact Information", isChecked: true },
+  ]);
+  const [queries, setQueries] = useState<string[]>([]);
+
+  const handleChexboxChange = (isChecked: boolean, index: number) => {
+    setCheckboxes((prevState) => {
+      const newPrevState = [...prevState];
+      newPrevState[index].isChecked = isChecked;
+      return newPrevState;
+    });
+  };
 
   // Handle changes to the domain query input
   const handleDomainQuery = (event: ChangeEvent<HTMLInputElement>) => {
@@ -50,6 +63,7 @@ const Domains = () => {
         setIsloading(false);
         return;
       }
+      setQueries((prevState) => [searchQuery, ...prevState]);
       setDomain(data.WhoisRecord);
       setAlertState(alertInitialState);
       setIsloading(false);
@@ -74,9 +88,24 @@ const Domains = () => {
     setAlertState(alertInitialState);
   };
 
+  const handleSearchByQuery = async (value: string) => {
+    setDomainQuery(value);
+    await fetchDomain(value);
+  };
+
   // Render the domains component
   return (
     <div className="space-y-4">
+      <div className="flex gap-2">
+        {queries.slice(0, 5).map((query) => (
+          <button
+            className="bg-gray-200 rounded-full px-2"
+            onClick={() => handleSearchByQuery(query)}
+          >
+            {query}
+          </button>
+        ))}
+      </div>
       <Alert
         severity={alertState.severity}
         message={alertState.message}
@@ -89,11 +118,14 @@ const Domains = () => {
         handleInformationQuery={handleInformationQuery}
         infomrationQuery={infomrationQuery}
         handleSearchDomain={handleSearchDomain}
+        checkboxes={checkboxes}
+        handleChexboxChange={handleChexboxChange}
       />
       <InformationTables
         infomrationQuery={infomrationQuery}
         data={domain}
         isLoading={isLoading}
+        checkboxes={checkboxes}
       />
     </div>
   );

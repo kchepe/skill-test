@@ -1,4 +1,4 @@
-import React, { ChangeEvent } from "react";
+import React, { ChangeEvent, useState } from "react";
 import SearchField from "../SearchField";
 import Select, { InformationType } from "../Select";
 
@@ -8,6 +8,8 @@ interface IFilters {
   infomrationQuery: InformationType; // The current value of the information query select
   handleInformationQuery: (value: InformationType) => void; // Function to handle information query select change
   handleSearchDomain: (searchQuery: string) => void; // Function to handle the search action
+  checkboxes: { label: string; isChecked: boolean }[];
+  handleChexboxChange: (isChecked: boolean, index: number) => void;
 }
 
 const Filters = ({
@@ -16,6 +18,8 @@ const Filters = ({
   infomrationQuery,
   handleInformationQuery,
   handleSearchDomain,
+  checkboxes,
+  handleChexboxChange,
 }: IFilters) => {
   return (
     <div className="grid grid-cols-2 items-center gap-10">
@@ -25,17 +29,30 @@ const Filters = ({
           onChange={handleDomainQuery}
           value={domainQuery}
           handleSearch={() => handleSearchDomain(domainQuery)}
+          autoFocus
         />
       </div>
+      {checkboxes.map((chk, index) => (
+        <div key={`${chk.label}-${index}`} className="flex gap-2">
+          <input
+            type="checkbox"
+            checked={chk.isChecked}
+            onChange={(event) =>
+              handleChexboxChange(event.target.checked, index)
+            }
+          />
+          {chk.label}
+        </div>
+      ))}
       {/* Select dropdown for choosing information query type */}
-      <div className="col-span-full flex justify-end">
+      {/* <div className="col-span-full flex justify-end">
         <Select
           value={infomrationQuery}
           onChange={(event) =>
             handleInformationQuery(event.target.value as InformationType)
           }
         />
-      </div>
+      </div> */}
     </div>
   );
 };
